@@ -1,0 +1,30 @@
+sudo: false
+language: C
+services:
+- docker
+cache:
+  directories:
+  - "$HOME/.cache"
+script:
+- sudo apt-get install -y ruby
+- sudo gem install bundler
+- bundle exec rake build
+- find .
+deploy:
+  provider: packagecloud
+  edge:
+    source: computology/dpl
+    branch: pcloud_gems
+  username: capotej
+  repository: rubygem-test-package
+  token: "${PACKAGECLOUD_TOKEN}"
+  package_glob: "pkg/*.{gem}"
+  skip_cleanup: true
+  on:
+    all_branches: true
+notifications:
+  email:
+    recipients:
+    - julio@packagecloud.io
+    on_success: change
+    on_failure: always
